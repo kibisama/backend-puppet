@@ -33,7 +33,7 @@ const extendPage = (page, name, color) => {
     console.log(
       `${chalk[color](name + ":")} No elements with xPath "${xPath}" found`
     );
-    return els;
+    return [];
   };
   /**
    * Waits until the page is fully rendered.
@@ -129,7 +129,7 @@ const extendPage = (page, name, color) => {
       const els = await Promise.all(
         xPathArray.map(async (xPath) => await page.$(`::-p-xpath(${xPath})`))
       );
-      const noResult = els.indexOf(undefined);
+      const noResult = els.indexOf(null);
       if (noResult > -1) {
         console.log(
           `${chalk[color](name + ":")} Cannot find element "${

@@ -25,10 +25,12 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (app.get("cardinalPuppetOccupied")) {
+    app.set("cardinalPuppetOccupied", false);
+  }
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
-  res.status(err.status || 500);
-  // res.render('error');
+  res.sendStatus(err.status || 500);
 });
 
 const cardinalPuppet = require("./puppets/cardinal/cardinalPuppet");

@@ -27,6 +27,5 @@ const reload = async (req, res, next) => {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
     next(e);
   }
-  req.app.set("cardinalPuppetOccupied", false);
 };
 module.exports = reload;

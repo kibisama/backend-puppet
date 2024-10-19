@@ -1,6 +1,8 @@
 const chalk = require("chalk");
 const dayjs = require("dayjs");
+const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 dayjs.extend(isSameOrAfter);
+const isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
 dayjs.extend(isSameOrBefore);
 
 const fn = (name, color, xPaths) => {
@@ -185,6 +187,7 @@ const fn = (name, color, xPaths) => {
           const _invoiceDate = (
             await page.getInnerTexts(_xPaths.invoiceDate)
           )[0];
+          console.log("_INVOICE DATE SUBSTRING", _invoiceDate);
           const invoiceDate = _invoiceDate.substring(
             0,
             _invoiceDate.indexOf(" ")
