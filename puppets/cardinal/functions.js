@@ -1,5 +1,7 @@
 const chalk = require("chalk");
 const dayjs = require("dayjs");
+const customParseFormat = require("dayjs/plugin/customParseFormat");
+dayjs.extend(customParseFormat);
 const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 dayjs.extend(isSameOrAfter);
 const isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
@@ -15,6 +17,7 @@ const fn = (name, color, xPaths) => {
         await page.type('input[id="okta-signin-username"]', id);
         await page.type('input[id="okta-signin-password"]', password);
         await page.click('input[id="okta-signin-submit"]');
+        await page.waitForNavigation();
         await page.waitForPageRendering(15000);
       } catch (e) {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
@@ -49,6 +52,7 @@ const fn = (name, color, xPaths) => {
         const _menuButton = await page.waitForElement(menuButton);
         if (_menuButton) {
           await _menuButton.click();
+          await page.waitForNavigation();
           await page.waitForPageRendering(15000);
           const _targetEl = await page.waitForElement(targetEl);
           if (_targetEl) {
@@ -79,6 +83,7 @@ const fn = (name, color, xPaths) => {
             );
             if (findInvoiceButton) {
               await findInvoiceButton.click();
+              await page.waitForNavigation();
               await page.waitForPageRendering();
               await page.waitForElement(xPaths.orderHistory.either30Days);
             } else {
@@ -90,7 +95,7 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return;
       }
-      const targetDayjs = dayjs(date);
+      const targetDayjs = date ? dayjs(date, "MM/DD/YYYY") : dayjs();
       const targetDate = targetDayjs.format("MM/DD/YYYY");
       const targetXPath = `//td[@class= "colDateShort cahTableCellBorder"] //span[contains(text(), "${targetDate}")] /.. /.. //td[@class= "colSO cahTableCellBorder"] //a`;
       try {
@@ -117,6 +122,7 @@ const fn = (name, color, xPaths) => {
                     )} Target invoice not found. Searching next 30 days ...`
                   );
                   await next30DaysLink.click();
+                  await page.waitForNavigation();
                   await page.waitForPageRendering();
                   await page.waitForElement(xPaths.orderHistory.either30Days);
                   continue;
@@ -136,6 +142,7 @@ const fn = (name, color, xPaths) => {
                       )} Target invoice not found. Searching previous 30 days ...`
                     );
                     await prev30DaysLink.click();
+                    await page.waitForNavigation();
                     await page.waitForPageRendering();
                     await page.waitForElement(xPaths.orderHistory.either30Days);
                     continue;
@@ -187,7 +194,6 @@ const fn = (name, color, xPaths) => {
           const _invoiceDate = (
             await page.getInnerTexts(_xPaths.invoiceDate)
           )[0];
-          console.log("_INVOICE DATE SUBSTRING", _invoiceDate);
           const invoiceDate = _invoiceDate.substring(
             0,
             _invoiceDate.indexOf(" ")
@@ -214,12 +220,14 @@ const fn = (name, color, xPaths) => {
 
           const classCol = await page.$(`::-p-xpath(${_xPaths.classCol})`);
           let cost,
-            confirmNumber = [];
+            confirmNumber,
+            itemClass = [];
           if (classCol) {
             cost = await page.getInnerTexts(_xPaths.costWithClassCol);
             confirmNumber = await page.getInnerTexts(
               _xPaths.confirmNumberWithClassCol
             );
+            itemClass = await page.getInnerTexts(_xPaths.costWithNoClassCol);
           } else {
             cost = await page.getInnerTexts(_xPaths.costWithNoClassCol);
             confirmNumber = await page.getInnerTexts(
@@ -232,6 +240,7 @@ const fn = (name, color, xPaths) => {
             );
             if (backToOrderHistory) {
               await backToOrderHistory.click();
+              await page.waitForNavigation();
               await page.waitForPageRendering();
             } else {
               return new Error("Failed to navigate back");
@@ -253,6 +262,7 @@ const fn = (name, color, xPaths) => {
             omitCode,
             cost,
             confirmNumber,
+            itemClass,
           };
         }
       } catch (e) {

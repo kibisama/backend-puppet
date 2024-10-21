@@ -5,7 +5,6 @@ const reload = require("../controllers/cardinal/reload");
 const router = express.Router();
 
 router.use(reload);
-router.get("/getInvoice", getInvoice);
-// router.post("/getInvoice", getInvoice);
+router.post("/getInvoice", getInvoice);
 
 module.exports = router;

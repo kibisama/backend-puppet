@@ -22,6 +22,8 @@ const getInvoice = async (req, res, next) => {
     );
     if (invoiceLink) {
       await invoiceLink.click();
+      await page.waitForNavigation();
+      await page.waitForPageRendering();
       const result = await fn.collectInvoiceDetail(page, true);
       if (result instanceof Error) {
         next(result);
@@ -31,12 +33,12 @@ const getInvoice = async (req, res, next) => {
     }
   }
   req.app.set("cardinalPuppetOccupied", false);
-  return {
+  return res.send({
     results: {
       invoiceNumbers,
       invoiceDetails,
     },
-  };
+  });
 };
 
 module.exports = getInvoice;
