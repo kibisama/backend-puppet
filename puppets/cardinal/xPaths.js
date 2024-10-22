@@ -40,6 +40,7 @@ module.exports = {
     //   '//td[@class= "columnLgSmall cahTableCellBorder" and position()= 15]',
     cin: '//td[@class= "columnLgCin cahTableCellBorder"] //a',
     ndcupc: '//td[@class="columnLgFirstTableNdc cahTableCellBorder"] //div',
+    tradeName: '//div[@class= "dataTableColNoWrap100"] //a',
     origQty: '//td[@class= "columnLgOrigQty cahTableCellBorder"] //span',
     orderQty: '//td[@class= "columnLgQty cahTableCellBorder"] //span',
     shipQty: '//td[@class= "columnLgShipQty cahTableCellBorder"] //span',
