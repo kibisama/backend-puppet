@@ -41,6 +41,7 @@ module.exports = {
     cin: '//td[@class= "columnLgCin cahTableCellBorder"] //a',
     ndcupc: '//td[@class="columnLgFirstTableNdc cahTableCellBorder"] //div',
     tradeName: '//div[@class= "dataTableColNoWrap100"] //a',
+    form: '//td[@class= "columnLgSize cahTableCellBorder"]',
     origQty: '//td[@class= "columnLgOrigQty cahTableCellBorder"] //span',
     orderQty: '//td[@class= "columnLgQty cahTableCellBorder"] //span',
     shipQty: '//td[@class= "columnLgShipQty cahTableCellBorder"] //span',

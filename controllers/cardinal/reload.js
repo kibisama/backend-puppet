@@ -20,9 +20,7 @@ const reload = async (req, res, next) => {
         next(connect);
       }
     } // else if () {} find an element if Cardinal is under maintenance
-    else {
-      next();
-    }
+    next();
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
     next(e);

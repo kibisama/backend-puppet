@@ -178,6 +178,7 @@ const fn = (name, color, xPaths) => {
           _xPaths.cin,
           _xPaths.ndcupc,
           _xPaths.tradeName,
+          _xPaths.form,
           _xPaths.origQty,
           _xPaths.orderQty,
           _xPaths.shipQty,
@@ -215,6 +216,7 @@ const fn = (name, color, xPaths) => {
           const cin = await page.getInnerTexts(_xPaths.cin);
           const ndcupc = await page.getInnerTexts(_xPaths.ndcupc);
           const tradeName = await page.getInnerTexts(_xPaths.tradeName);
+          const form = await page.getInnerTexts(_xPaths.form);
           const origQty = await page.getInnerTexts(_xPaths.origQty);
           const orderQty = await page.getInnerTexts(_xPaths.orderQty);
           const shipQty = await page.getInnerTexts(_xPaths.shipQty);
@@ -259,6 +261,7 @@ const fn = (name, color, xPaths) => {
             cin,
             ndcupc,
             tradeName,
+            form,
             origQty,
             orderQty,
             shipQty,
