@@ -7,39 +7,44 @@ const getInvoice = async (req, res, next) => {
   console.log(
     `${chalk[color](name + ":")} Requested to retrieve invoice info ${date} ...`
   );
-  const orderHistoryPage = await fn.pressMenu(page, "Order History");
-  if (orderHistoryPage instanceof Error) {
-    next(orderHistoryPage);
-  }
-  const invoiceNumbers = await fn.findInvoiceNumbersByDate(page, date);
-  if (invoiceNumbers instanceof Error) {
-    next(invoiceNumbers);
-  }
-  const invoiceDetails = [];
-  for (let i = 0; i < invoiceNumbers.length; i++) {
-    const invoiceLink = await page.waitForElement(
-      `//td[@class= "colSO cahTableCellBorder"] //a[contains(text(), "${invoiceNumbers[i]}")]`
-    );
-    if (invoiceLink) {
-      const navigationPromise = page.waitForNavigation();
-      await invoiceLink.click();
-      await navigationPromise;
-      await page.waitForPageRendering();
-      const result = await fn.collectInvoiceDetail(page, true);
-      if (result instanceof Error) {
-        next(result);
-      } else if (result) {
-        invoiceDetails.push(result);
+  try {
+    const orderHistoryPage = await fn.pressMenu(page, "Order History");
+    if (orderHistoryPage instanceof Error) {
+      next(orderHistoryPage);
+    }
+    const invoiceNumbers = await fn.findInvoiceNumbersByDate(page, date);
+    if (invoiceNumbers instanceof Error) {
+      next(invoiceNumbers);
+    }
+    const invoiceDetails = [];
+    for (let i = 0; i < invoiceNumbers.length; i++) {
+      const invoiceLink = await page.waitForElement(
+        `//td[@class= "colSO cahTableCellBorder"] //a[contains(text(), "${invoiceNumbers[i]}")]`
+      );
+      if (invoiceLink) {
+        const navigationPromise = page.waitForNavigation();
+        await invoiceLink.click();
+        await navigationPromise;
+        await page.waitForPageRendering();
+        const result = await fn.collectInvoiceDetail(page, true);
+        if (result instanceof Error) {
+          next(result);
+        } else if (result) {
+          invoiceDetails.push(result);
+        }
       }
     }
+    req.app.set("cardinalPuppetOccupied", false);
+    return res.send({
+      results: {
+        invoiceNumbers,
+        invoiceDetails,
+      },
+    });
+  } catch (e) {
+    console.log(`${chalk[color](name + ":")} ${e.message}`);
+    next(e);
   }
-  req.app.set("cardinalPuppetOccupied", false);
-  return res.send({
-    results: {
-      invoiceNumbers,
-      invoiceDetails,
-    },
-  });
 };
 
 module.exports = getInvoice;

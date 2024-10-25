@@ -123,19 +123,23 @@ const extendPage = (page, name, color) => {
     const maxCount = timeout / interval;
     let count = 0;
     while (count++ < maxCount) {
-      const els = await Promise.all(
-        xPathArray.map(async (xPath) => await page.$(`::-p-xpath(${xPath})`))
-      );
-      const noResult = els.indexOf(null);
-      if (noResult > -1) {
-        console.log(
-          `${chalk[color](name + ":")} Cannot find element "${
-            xPathArray[noResult]
-          }" ... waiting another interval`
+      try {
+        const els = await Promise.all(
+          xPathArray.map(async (xPath) => await page.$(`::-p-xpath(${xPath})`))
         );
-        await new Promise((r) => setTimeout(r, interval));
-      } else {
-        return els;
+        const noResult = els.indexOf(null);
+        if (noResult > -1) {
+          console.log(
+            `${chalk[color](name + ":")} Cannot find element "${
+              xPathArray[noResult]
+            }" ... waiting another interval`
+          );
+          await new Promise((r) => setTimeout(r, interval));
+        } else {
+          return els;
+        }
+      } catch (e) {
+        console.log(`${chalk[color](name + ":")} ${e.message}`);
       }
     }
     console.log(
