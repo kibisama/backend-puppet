@@ -24,10 +24,12 @@ app.use((req, res, next) => {
   next(error);
 });
 
+const CardinalPuppetError = require("./puppets/cardinal/CardinalPuppetError");
 app.use((err, req, res, next) => {
-  if (app.get("cardinalPuppetOccupied")) {
-    app.set("cardinalPuppetOccupied", false);
+  if (err instanceof CardinalPuppetError) {
+    // reboot cardinalpuppet
   }
+  app.set("cardinalPuppetOccupied", false);
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
   res.sendStatus(err.status || 500);
@@ -35,8 +37,6 @@ app.use((err, req, res, next) => {
 
 const cardinalPuppet = require("./puppets/cardinal/cardinalPuppet");
 
-//
-//
 const createServer = async () => {
   app.set("cardinalPuppet", await cardinalPuppet());
   app.set("cardinalPuppetOccupied", false);

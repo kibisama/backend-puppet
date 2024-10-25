@@ -36,7 +36,9 @@ const initPuppet = async (
     });
     const page = await context.newPage();
     if (url) {
-      await page.goto(url, waitForOptions);
+      const navigationPromise = page.waitForNavigation(waitForOptions);
+      await page.goto(url);
+      await navigationPromise;
       await page.waitForPageRendering();
     }
     return { browser, context, page };

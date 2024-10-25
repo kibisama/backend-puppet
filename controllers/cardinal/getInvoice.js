@@ -21,8 +21,9 @@ const getInvoice = async (req, res, next) => {
       `//td[@class= "colSO cahTableCellBorder"] //a[contains(text(), "${invoiceNumbers[i]}")]`
     );
     if (invoiceLink) {
+      const navigationPromise = page.waitForNavigation();
       await invoiceLink.click();
-      await page.waitForNavigation();
+      await navigationPromise;
       await page.waitForPageRendering();
       const result = await fn.collectInvoiceDetail(page, true);
       if (result instanceof Error) {

@@ -63,11 +63,11 @@ const extendPage = (page, name, color) => {
       } catch (e) {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
       }
-      console.log(
-        `${chalk[color](
-          name + ":"
-        )} last: ${lastHTMLSize}  current: ${currentHTMLSize}  body HTML size: ${bodyHTMLSize}`
-      );
+      // console.log(
+      //   `${chalk[color](
+      //     name + ":"
+      //   )} last: ${lastHTMLSize}  current: ${currentHTMLSize}  body HTML size: ${bodyHTMLSize}`
+      // );
       if (lastHTMLSize !== 0 && currentHTMLSize === lastHTMLSize)
         countStableSizeIterations++;
       else countStableSizeIterations = 0;
@@ -109,9 +109,6 @@ const extendPage = (page, name, color) => {
       );
       return;
     }
-    console.log(
-      `${chalk[color](name + ":")} A target ElementHandle "${xPath}" found`
-    );
     return el;
   };
   /**

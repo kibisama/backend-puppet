@@ -6,6 +6,7 @@ const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 dayjs.extend(isSameOrAfter);
 const isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
 dayjs.extend(isSameOrBefore);
+const CardinalPuppetError = require("./CardinalPuppetError");
 
 const fn = (name, color, xPaths) => {
   return {
@@ -16,14 +17,11 @@ const fn = (name, color, xPaths) => {
       try {
         await page.type('input[id="okta-signin-username"]', id);
         await page.type('input[id="okta-signin-password"]', password);
-        await page.click('input[id="okta-signin-submit"]');
-        await page.waitForNavigation();
+        await Promise.all([
+          page.waitForNavigation(),
+          page.click('input[id="okta-signin-submit"]'),
+        ]);
         await page.waitForPageRendering(15000);
-      } catch (e) {
-        console.log(`${chalk[color](name + ":")} ${e.message}`);
-        return e;
-      }
-      try {
         const home = await page.waitForElement(xPaths.menu.home);
         if (home) {
           return page;
@@ -32,7 +30,9 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return new Error("Unable to sign in to Order Express. Please try later");
+      return new CardinalPuppetError(
+        "Failed to sign in to Order Express. Please try later"
+      );
     },
     async pressMenu(page, name) {
       console.log(
@@ -46,14 +46,13 @@ const fn = (name, color, xPaths) => {
           targetEl = xPaths.orderHistory.findInvoice;
           break;
         default:
-          return Error("Incorrect argument");
+          return new CardinalPuppetError("Incorrect argument");
       }
       try {
         const _menuButton = await page.waitForElement(menuButton);
         if (_menuButton) {
-          await _menuButton.click();
-          await page.waitForNavigation();
-          await page.waitForPageRendering(15000);
+          await Promise.all([page.waitForNavigation(), _menuButton.click()]);
+          await page.waitForPageRendering(10000);
           const _targetEl = await page.waitForElement(targetEl);
           if (_targetEl) {
             return page;
@@ -63,7 +62,7 @@ const fn = (name, color, xPaths) => {
         `${chalk[color](name + ":")} ${e.message}`;
         return e;
       }
-      return new Error(`Failed to click ${menuButton}`);
+      return new CardinalPuppetError(`Failed to click ${menuButton}`);
     },
     async findInvoiceNumbersByDate(page, date) {
       console.log(`${chalk[color](name + ":")} Finding Invoice ...`);
@@ -82,12 +81,14 @@ const fn = (name, color, xPaths) => {
               xPaths.orderHistory.findInvoice
             );
             if (findInvoiceButton) {
-              await findInvoiceButton.click();
-              await page.waitForNavigation();
+              await Promise.all([
+                page.waitForNavigation(),
+                findInvoiceButton.click(),
+              ]);
               await page.waitForPageRendering();
               await page.waitForElement(xPaths.orderHistory.either30Days);
             } else {
-              return new Error("Cannot find Find Invoice Button");
+              return new CardinalPuppetError("Cannot find Find Invoice Button");
             }
           }
         }
@@ -106,7 +107,7 @@ const fn = (name, color, xPaths) => {
               await page.getInnerTexts(xPaths.orderHistory.shipDate)
             )[0];
             if (!someShipDate) {
-              return new Error("Cannot get invoice date texts");
+              return new CardinalPuppetError("Cannot get invoice date texts");
             }
             const someShipDayjs = dayjs(someShipDate);
             if (targetDayjs.isBefore(someShipDayjs, "day")) {
@@ -121,8 +122,10 @@ const fn = (name, color, xPaths) => {
                       name + ":"
                     )} Target invoice not found. Searching next 30 days ...`
                   );
-                  await next30DaysLink.click();
-                  await page.waitForNavigation();
+                  Promise.all([
+                    page.waitForNavigation(),
+                    next30DaysLink.click(),
+                  ]);
                   await page.waitForPageRendering();
                   await page.waitForElement(xPaths.orderHistory.either30Days);
                   continue;
@@ -141,8 +144,10 @@ const fn = (name, color, xPaths) => {
                         name + ":"
                       )} Target invoice not found. Searching previous 30 days ...`
                     );
-                    await prev30DaysLink.click();
-                    await page.waitForNavigation();
+                    Promise.all([
+                      page.waitForNavigation(),
+                      prev30DaysLink.click(),
+                    ]);
                     await page.waitForPageRendering();
                     await page.waitForElement(xPaths.orderHistory.either30Days);
                     continue;
@@ -162,7 +167,7 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return new Error("Failed to find invoice numbers");
+      return [];
     },
     async collectInvoiceDetail(page, back) {
       const _xPaths = xPaths.invoiceDetail;
@@ -243,11 +248,13 @@ const fn = (name, color, xPaths) => {
               _xPaths.backToOrderHistory
             );
             if (backToOrderHistory) {
-              await backToOrderHistory.click();
-              await page.waitForNavigation();
+              Promise.all([
+                page.waitForNavigation(),
+                backToOrderHistory.click(),
+              ]);
               await page.waitForPageRendering();
             } else {
-              return new Error("Failed to navigate back");
+              return new CardinalPuppetError("Failed to navigate back");
             }
           }
           return {
@@ -275,7 +282,7 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return new Error("Failed to collect invoice data");
+      return new CardinalPuppetError("Failed to collect invoice data");
     },
   };
 };

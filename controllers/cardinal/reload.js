@@ -2,16 +2,18 @@ const chalk = require("chalk");
 
 const reload = async (req, res, next) => {
   if (req.app.get("cardinalPuppetOccupied")) {
-    next(new Error("Puppet is already occupied"));
+    next(new Error("Puppet already occupied"));
   }
-  req.app.set("cardinalPuppetOccupied", true);
-  const { name, color, browser, context, page, fn, waitForOptions } =
-    req.app.get("cardinalPuppet");
-  const id = process.env.CARDINAL_USERNAME;
-  const password = process.env.CARDINAL_PASSWORD;
-  const url = process.env.CARDINAL_ADDRESS;
   try {
-    await page.goto(url, waitForOptions);
+    req.app.set("cardinalPuppetOccupied", true);
+    const { name, color, browser, context, page, fn, waitForOptions } =
+      req.app.get("cardinalPuppet");
+    const id = process.env.CARDINAL_USERNAME;
+    const password = process.env.CARDINAL_PASSWORD;
+    const url = process.env.CARDINAL_ADDRESS;
+    const navigationPromise = page.waitForNavigation(waitForOptions);
+    await page.goto(url);
+    await navigationPromise;
     await page.waitForPageRendering();
     const usernameInput = await page.$('input[id="okta-signin-username"]');
     if (usernameInput) {
