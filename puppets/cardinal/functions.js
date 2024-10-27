@@ -52,7 +52,7 @@ const fn = (name, color, xPaths) => {
         const _menuButton = await page.waitForElement(menuButton);
         if (_menuButton) {
           await Promise.all([page.waitForNavigation(), _menuButton.click()]);
-          await page.waitForPageRendering(10000);
+          await page.waitForPageRendering();
           const _targetEl = await page.waitForElement(targetEl);
           if (_targetEl) {
             return page;
@@ -69,7 +69,7 @@ const fn = (name, color, xPaths) => {
       try {
         const invoiceViewSelected = await page.waitForElement(
           xPaths.orderHistory.invoiceViewSelected,
-          5000
+          500
         );
         if (!invoiceViewSelected) {
           const invoiceViewSelector = await page.waitForElement(
@@ -178,8 +178,6 @@ const fn = (name, color, xPaths) => {
           _xPaths.orderNumber,
           _xPaths.orderDate,
           _xPaths.poNumber,
-          _xPaths.totalShipped,
-          _xPaths.totalAmount,
           _xPaths.cin,
           _xPaths.ndcupc,
           _xPaths.tradeName,
@@ -211,12 +209,6 @@ const fn = (name, color, xPaths) => {
           const _orderDate = (await page.getInnerTexts(_xPaths.orderDate))[0];
           const orderDate = _orderDate.substring(0, _orderDate.indexOf(" "));
           const poNumber = (await page.getInnerTexts(_xPaths.poNumber))[0];
-          const totalShipped = (
-            await page.getInnerTexts(_xPaths.totalShipped)
-          )[0];
-          const totalAmount = (
-            await page.getInnerTexts(_xPaths.totalAmount)
-          )[0];
 
           const cin = await page.getInnerTexts(_xPaths.cin);
           const ndcupc = await page.getInnerTexts(_xPaths.ndcupc);
@@ -248,10 +240,9 @@ const fn = (name, color, xPaths) => {
               _xPaths.backToOrderHistory
             );
             if (backToOrderHistory) {
-              Promise.all([
-                page.waitForNavigation(),
-                backToOrderHistory.click(),
-              ]);
+              const navigationPromise = page.waitForNavigation();
+              await backToOrderHistory.click();
+              await navigationPromise;
               await page.waitForPageRendering();
             } else {
               return new CardinalPuppetError("Failed to navigate back");
@@ -263,8 +254,6 @@ const fn = (name, color, xPaths) => {
             orderNumber,
             orderDate,
             poNumber,
-            totalShipped,
-            totalAmount,
             cin,
             ndcupc,
             tradeName,

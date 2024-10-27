@@ -30,10 +30,6 @@ module.exports = {
       '//tr[position()= 2] //td[@class= "topPanelGridColumnTwoSmall"] //span',
     poNumber:
       '//span[contains(text(), "PO #:")] /.. /.. //td[@class= "topPanelGridColumnTwoSmall"] //span[@class= "outputText"]',
-    totalShipped:
-      '//span[contains(text(), "Total Pieces Shipped")] /.. /.. //td[position()= 2] //span[@class= "outputText"]',
-    totalAmount:
-      '//span[contains(text(), "Amount")] /.. /.. //td[position()= 2] //span[@class= "outputText"]',
     classCol:
       '//th[@class= "dataTableBorder"] //span[contains(text(), "Class")]',
     // itemClass:
