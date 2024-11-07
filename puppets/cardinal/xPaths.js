@@ -2,6 +2,8 @@ module.exports = {
   menu: {
     home: '//div[@id= "menu"] //a[contains(text(), "Home")]',
     orderHistory: '//div[@id= "menu"] //a[contains(text(), "Order History")]',
+    searchBar: '//input[@class= "searchBox searchBoxThemeDefaultColor"]',
+    submitSearch: '//a[@id= "submitSearch"]',
   },
   orderHistory: {
     invoiceViewSelector: '//td[@class= "selectDateTblCol2"] //select',

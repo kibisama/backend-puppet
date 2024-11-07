@@ -64,6 +64,25 @@ const fn = (name, color, xPaths) => {
       }
       return new CardinalPuppetError(`Failed to click ${menuButton}`);
     },
+
+    async inputHomeSearchBar(page, ndc11) {
+      console.log(
+        `${chalk[color](name + ":")} Searching item info ${ndc11} ...`
+      );
+      try {
+        const searchBar = await page.waitForElements([
+          xPaths.menu.searchBar,
+          xPaths.menu.submitSearch,
+        ]);
+        await searchBar[0].type(ndc11, { delay: 100 });
+        await Promise.all([page.waitForNavigation(), searchBar[1].click()]);
+        await page.waitForPageRendering();
+      } catch (e) {
+        `${chalk[color](name + ":")} ${e.message}`;
+        return e;
+      }
+    },
+
     async findInvoiceNumbersByDate(page, date) {
       console.log(`${chalk[color](name + ":")} Finding Invoice ...`);
       try {
@@ -221,19 +240,12 @@ const fn = (name, color, xPaths) => {
 
           const classCol = await page.$(`::-p-xpath(${_xPaths.classCol})`);
           let cost,
-            confirmNumber,
             itemClass = [];
           if (classCol) {
             cost = await page.getInnerTexts(_xPaths.costWithClassCol);
-            confirmNumber = await page.getInnerTexts(
-              _xPaths.confirmNumberWithClassCol
-            );
             itemClass = await page.getInnerTexts(_xPaths.costWithNoClassCol);
           } else {
             cost = await page.getInnerTexts(_xPaths.costWithNoClassCol);
-            confirmNumber = await page.getInnerTexts(
-              _xPaths.confirmNumberWithNoClassCol
-            );
           }
           if (back) {
             const backToOrderHistory = await page.waitForElement(
@@ -263,7 +275,6 @@ const fn = (name, color, xPaths) => {
             shipQty,
             omitCode,
             cost,
-            confirmNumber,
             itemClass,
           };
         }
