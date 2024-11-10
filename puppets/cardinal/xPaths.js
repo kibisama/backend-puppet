@@ -55,4 +55,53 @@ module.exports = {
       '//td[@class= "columnLgPrice_right cahTableCellBorder" and position()= 17]',
     backToOrderHistory: '//a //span[contains(text(), "Order History")]',
   },
+  productDetails: {
+    // Tabs & View Selector
+    alternativesTab:
+      '//div[@class= "tabs"] //span[contains(text(), "Alternatives & Substitutions")]',
+    purchaseHistoryTab:
+      '//div[@class= "tabs"] //span[contains(text(), "Purchase History")]',
+    viewSelector: '//option[contains(text(), "24 Month Summary View")] /..',
+    // Data
+    title: '//span[@class ="cahMainTitleBarText"]',
+    fdbLabelName:
+      '//span[contains(text(), "FDB Label Name:")] /.. //span[@class= "outputText"]',
+    genericName:
+      '//span[contains(text(), "Generic Name:")] /.. /.. //span[@class= "outputText"]',
+    cin: '//span[contains(text(), "CIN:")] /.. /.. //span[@class= "outputText"]',
+    ndc: '//span[contains(text(), "NDC:")] /.. /.. //span[@class= "outputText"]',
+    upc: '//span[contains(text(), "UPC:")] /.. /.. //span[@class= "outputText"]',
+    contract:
+      '//span[contains(text(), "Contract:")] /.. /.. //span[@class= "outputText"]',
+    strength:
+      '//span[contains(text(), "Strength:")] /.. /.. //span[@class= "outputText"]',
+    form: '//span[contains(text(), "Form:")] /.. /.. //span[@class= "outputText"]',
+    stockStatus:
+      '//span[contains(text(), "Stock Status:")] /.. //span[@class= "cahStatusTextGreen" or @class= "cahStatusTextYellow" or @class= "cahStatusTextRed"]',
+    qtyAvailable:
+      '//span[contains(text(), "Quantity Available")] /.. /.. //span[@class= "outputText"] //b',
+    invoiceCost:
+      '//span[contains(text(), "Invoice Cost:")] /.. /.. /.. //span[@class= "invoiceCost"]',
+    retailPriceChanged:
+      '//span[contains(text(), "Retail Price Changed:")] /.. /.. //span[@class= "outputText"]',
+    fdbMfrName:
+      '//span[contains(text(), "FDB Manuf/Dist Name:")] /.. //span[@class= "outputText"]',
+    packageQty:
+      '//span[contains(text(), "Package Quantity:")] /.. //span[@class= "outputText"]',
+    packageSize:
+      '//span[contains(text(), "Package Size:")] /.. //span[@class= "outputText"]',
+    productType:
+      '//span[contains(text(), "Product Type:")] /.. //span[@class= "outputText"]',
+    unit: '//span[contains(text(), "Unit of Measure:")] /.. //span[@class= "outputText"]',
+    deaSchedule:
+      '//span[contains(text(), "DEA Schedule:")] /.. //span[@class= "outputText"]',
+    abRating:
+      '//span[contains(text(), "AB Rating:")] /.. //span[@class= "outputText"]',
+    returnPackaging:
+      '//span[contains(text(), "Return Packaging:")] /.. /.. //span[@class= "outputText"]',
+    specialty:
+      '//span[contains(text(), "Specialty:")] /.. /.. //span[@class= "outputText"]',
+    // Temporal tooltip
+    purchaseHistory: '//div[@id= "tooltipleftMsgGREEN"]',
+  },
 };

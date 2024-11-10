@@ -34,13 +34,13 @@ const getInvoice = async (req, res, next) => {
         }
       }
     }
-    req.app.set("cardinalPuppetOccupied", false);
-    return res.send({
+    res.send({
       results: {
         invoiceNumbers,
         invoiceDetails,
       },
     });
+    return req.app.set("cardinalPuppetOccupied", false);
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
     next(e);

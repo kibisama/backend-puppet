@@ -284,6 +284,80 @@ const fn = (name, color, xPaths) => {
       }
       return new CardinalPuppetError("Failed to collect invoice data");
     },
+    async collectProductDetails(page, back) {
+      const _xPaths = xPaths.productDetails;
+      try {
+        const els = await page.waitForElements([
+          _xPaths.title,
+          _xPaths.fdbLabelName,
+          _xPaths.genericName,
+          _xPaths.cin,
+          _xPaths.ndc,
+          _xPaths.upc,
+          _xPaths.contract,
+          _xPaths.strength,
+          _xPaths.form,
+          _xPaths.stockStatus,
+          _xPaths.qtyAvailable,
+          _xPaths.invoiceCost,
+          _xPaths.retailPriceChanged,
+          _xPaths.fdbMfrName,
+          _xPaths.packageQty,
+          _xPaths.packageSize,
+          _xPaths.productType,
+          _xPaths.unit,
+          _xPaths.deaSchedule,
+          _xPaths.abRating,
+          _xPaths.returnPackaging,
+          _xPaths.specialty,
+        ]);
+        if (els) {
+          console.log(
+            `${chalk[color](
+              name + ":"
+            )} Product details found. Collecting data ...`
+          );
+          let purchaseHistory = "";
+          const lastPurchasedImg = await page.$(
+            'img[class="last_purchased_img"]'
+          );
+          if (lastPurchasedImg) {
+            await lastPurchasedImg.hover();
+            purchaseHistory = (
+              await page.getInnerTexts(_xPaths.purchaseHistory)
+            )[0];
+          }
+          const title = (await page.getInnerTexts(_xPaths.title))[0];
+          const fdbLabelName = (await page.getInnerTexts(_xPaths.title))[0];
+          const genericName = (
+            await page.getInnerTexts(_xPaths.genericName)
+          )[0];
+          const cin = (await page.getInnerTexts(_xPaths.cin))[0];
+          const ndc = (await page.getInnerTexts(_xPaths.ndc))[0];
+          const upc = (await page.getInnerTexts(_xPaths.upc))[0];
+          const contract = (await page.getInnerTexts(_xPaths.contract))[0];
+          const strength = (await page.getInnerTexts(_xPaths.strength))[0];
+          const form = (await page.getInnerTexts(_xPaths.form))[0];
+          const stockStatus = (
+            await page.getInnerTexts(_xPaths.stockStatus)
+          )[0];
+          const qtyAvailable = (
+            await page.getInnerTexts(_xPaths.qtyAvailable)
+          )[0];
+          const invoiceCost = (
+            await page.getInnerTexts(_xPaths.invoiceCost)
+          )[0];
+          const retailPriceChanged = (
+            await page.getInnerTexts(_xPaths.retailPriceChanged)
+          )[0];
+          const fdbMfrName = (await page.getInnerTexts(_xPaths.fdbMfrName))[0];
+        }
+      } catch (e) {
+        console.log(`${chalk[color](name + ":")} ${e.message}`);
+        return e;
+      }
+      return new CardinalPuppetError("Failed to collect product details");
+    },
   };
 };
 

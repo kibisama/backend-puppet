@@ -2,7 +2,9 @@ const chalk = require("chalk");
 
 const reload = async (req, res, next) => {
   if (req.app.get("cardinalPuppetOccupied")) {
-    next(new Error("Puppet already occupied"));
+    const error = new Error("Puppet already occupied");
+    error.status = 503;
+    next(error);
   }
   const cardinalPuppet = req.app.get("cardinalPuppet");
   if (cardinalPuppet) {
