@@ -282,9 +282,9 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return new CardinalPuppetError("Failed to collect invoice data");
+      return new CardinalPuppetError("Failed to collect Invoice Detail");
     },
-    async collectProductDetails(page, back) {
+    async collectProductDetails(page) {
       const _xPaths = xPaths.productDetails;
       try {
         const els = await page.waitForElements([
@@ -351,12 +351,93 @@ const fn = (name, color, xPaths) => {
             await page.getInnerTexts(_xPaths.retailPriceChanged)
           )[0];
           const fdbMfrName = (await page.getInnerTexts(_xPaths.fdbMfrName))[0];
+          const packageQty = (await page.getInnerTexts(_xPaths.packageQty))[0];
+          const packageSize = (
+            await page.getInnerTexts(_xPaths.packageSize)
+          )[0];
+          const productType = (
+            await page.getInnerTexts(_xPaths.productType)
+          )[0];
+          const unit = (await page.getInnerTexts(_xPaths.unit))[0];
+          const deaSchedule = (
+            await page.getInnerTexts(_xPaths.deaSchedule)
+          )[0];
+          const abRating = (await page.getInnerTexts(_xPaths.abRating))[0];
+          const returnPackaging = (
+            await page.getInnerTexts(_xPaths.returnPackaging)
+          )[0];
+          const specialty = (await page.getInnerTexts(_xPaths.specialty))[0];
+          return {
+            title,
+            fdbLabelName,
+            genericName,
+            cin,
+            ndc,
+            upc,
+            contract,
+            strength,
+            form,
+            stockStatus,
+            qtyAvailable,
+            invoiceCost,
+            retailPriceChanged,
+            fdbMfrName,
+            packageQty,
+            packageSize,
+            productType,
+            unit,
+            deaSchedule,
+            abRating,
+            returnPackaging,
+            specialty,
+          };
         }
       } catch (e) {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return new CardinalPuppetError("Failed to collect product details");
+      return new CardinalPuppetError("Failed to collect Product Details");
+    },
+    async collectSearchResults(page) {
+      const _xPaths = xPaths.searchResults;
+      try {
+        const els = await page.waitForElements([
+          _xPaths.altCin,
+          _xPaths.altNdc,
+          _xPaths.altSize,
+          _xPaths.altInvoiceCost,
+          _xPaths.altUoiCost,
+          _xPaths.altContract,
+        ]);
+        if (els) {
+          console.log(
+            `${chalk[color](
+              name + ":"
+            )} Search Results found. Collecting data ...`
+          );
+          const altCin = await page.getInnerTexts(_xPaths.altCin);
+          const altNdc = await page.getInnerTexts(_xPaths.altNdc);
+          const altSize = await page.getInnerTexts(_xPaths.altSize);
+          const altInvoiceCost = await page.getInnerTexts(
+            _xPaths.altInvoiceCost
+          );
+          const altUoiCost = await page.getInnerTexts(_xPaths.altUoiCost);
+          const altContract = await page.getInnerTexts(_xPaths.altContract);
+
+          return {
+            altCin,
+            altNdc,
+            altSize,
+            altInvoiceCost,
+            altUoiCost,
+            altContract,
+          };
+        }
+      } catch (e) {
+        console.log(`${chalk[color](name + ":")} ${e.message}`);
+        return e;
+      }
+      return new CardinalPuppetError("Failed to collect Search Results");
     },
   };
 };

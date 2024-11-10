@@ -104,4 +104,18 @@ module.exports = {
     // Temporal tooltip
     purchaseHistory: '//div[@id= "tooltipleftMsgGREEN"]',
   },
+  searchResults: {
+    altCin:
+      '//tr[@class ="psrGridViewRowEven"] //td[position()= 4] //div[@class= "showHand"] //a',
+    altNdc:
+      '//tr[@class ="psrGridViewRowEven"] //td[position()= 4] //div[position() =2]',
+    // Strenghth
+    altSize:
+      '//tr[@class ="psrGridViewRowEven"] //td[position()= 8] //div[@class= "dataTableColNoWrapStrenghth"]',
+    altInvoiceCost:
+      '//tr[@class ="psrGridViewRowEven"] //td[position()= 11] //span[not(@class)]',
+  },
+  altUoiCost:
+    '//tr[@class ="psrGridViewRowEven"] //td[position()= 12] //span[not(@class)]',
+  altContract: '//tr[@class ="psrGridViewRowEven"] //td[position()= 14] //font',
 };

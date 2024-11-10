@@ -19,16 +19,18 @@ const updateItem = async (req, res, next) => {
     const result = await page.waitForElement(
       `//span[contains(text(), "${ndc11}")] /.. //a`
     );
-    // 상세 페이지 접근 전에 가장 낮은 netuoicost 상품을 저장하자.
+    let searchResults;
+    let productDetails;
     if (result) {
+      searchResults = await fn.collectSearchResults(page);
       await Promise.all([page.waitForNavigation(), result.click()]);
       await page.waitForPageRendering();
-      await fn.collectProductDetails(page);
+      productDetails = await fn.collectProductDetails(page);
     }
 
     req.app.set("cardinalPuppetOccupied", false);
     return res.send({
-      results: {},
+      results: { searchResults, productDetails },
     });
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
