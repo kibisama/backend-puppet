@@ -16,16 +16,33 @@ const updateItem = async (req, res, next) => {
     if (noResult) {
       return res.sendStatus(404);
     }
-    const result = await page.waitForElement(
+    const productLink = await page.waitForElement(
       `//span[contains(text(), "${ndc11}")] /.. //a`
     );
-    let searchResults;
     let productDetails;
-    if (result) {
-      searchResults = await fn.collectSearchResults(page);
-      await Promise.all([page.waitForNavigation(), result.click()]);
+    if (productLink) {
+      await Promise.all([page.waitForNavigation(), productLink.click()]);
       await page.waitForPageRendering();
-      productDetails = await fn.collectProductDetails(page);
+
+      let count = 0;
+      const maxCount = 1;
+      while (count++ < maxCount) {
+        const result = await fn.collectProductDetails(page);
+        if (result instanceof Error) {
+          const url = page.url();
+          Promise.all(page.waitForNavigation(), page.goto(url));
+          await page.waitForPageRendering();
+          productDetails = result;
+        } else {
+          productDetails = result;
+          break;
+        }
+      }
+      if (productDetails instanceof Error) {
+        return next(productDetails);
+      }
+    } else {
+      next(new Error("Failed to find Product Details page."));
     }
 
     req.app.set("cardinalPuppetOccupied", false);

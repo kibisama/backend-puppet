@@ -80,6 +80,44 @@ const extendPage = (page, name, color) => {
     }
   };
   /**
+   * Waits until the target element (such as a progress image) disappears.
+   * Returns the target ElementHandle if still rendered after waiting.
+   * @param {string} xPath
+   * @param {number} minWaitingTime
+   * @param {number} timeout
+   * @returns {Promise<undefined> | Promise<ElementHandle>}
+   */
+  page.waitForElementFade = async (
+    xPath,
+    minWaitingTime = 0,
+    timeout = 60000
+  ) => {
+    const interval = 3000;
+    const maxCount = timeout / interval;
+    let count = 0;
+    if (minWaitingTime) {
+      await new Promise((r) => setTimeout(r, minWaitingTime));
+    }
+    try {
+      while (count++ < maxCount) {
+        const targetEl = await page.$(`::-p-xpath(${xPath})`);
+        if (targetEl) {
+          await new Promise((r) => setTimeout(r, interval));
+        } else {
+          console.log(
+            `${chalk[color](
+              name + ":"
+            )} The target element ${xPath} disappeared`
+          );
+          return;
+        }
+      }
+      return await page.$(`::-p-xpath(${xPath})`);
+    } catch (e) {
+      console.log(`${chalk[color](name + ":")} ${e.message}`);
+    }
+  };
+  /**
    * Waits until the target ElementHandle with a given xPath found.
    * A single xPath returns a single ElementHandle. Returns undefined if no result.
    * @param {string} xPath
@@ -145,7 +183,7 @@ const extendPage = (page, name, color) => {
     console.log(
       `${chalk[color](
         name + ":"
-      )} One or more elements from the given xPath array not found.`
+      )} One or more elements from the given xPath array not found`
     );
   };
 

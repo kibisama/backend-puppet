@@ -62,6 +62,7 @@ module.exports = {
     purchaseHistoryTab:
       '//div[@class= "tabs"] //span[contains(text(), "Purchase History")]',
     viewSelector: '//option[contains(text(), "24 Month Summary View")] /..',
+    inProgressImg: '//img[@class= "inprogressImg"]',
     // Data
     title: '//span[@class ="cahMainTitleBarText"]',
     fdbLabelName:
@@ -80,8 +81,10 @@ module.exports = {
       '//span[contains(text(), "Stock Status:")] /.. //span[@class= "cahStatusTextGreen" or @class= "cahStatusTextYellow" or @class= "cahStatusTextRed"]',
     qtyAvailable:
       '//span[contains(text(), "Quantity Available")] /.. /.. //span[@class= "outputText"] //b',
-    invoiceCost:
-      '//span[contains(text(), "Invoice Cost:")] /.. /.. /.. //span[@class= "invoiceCost"]',
+    estNetCost:
+      '//span[contains(text(), "Estimated Net Cost:")] /.. /.. /.. //span[@class= "outputText"]',
+    netUoiCost:
+      '//span[contains(text(), "Net UOI Cost:")] /.. /.. //span[@class= "outputText"]',
     retailPriceChanged:
       '//span[contains(text(), "Retail Price Changed:")] /.. /.. //span[@class= "outputText"]',
     fdbMfrName:
@@ -101,21 +104,41 @@ module.exports = {
       '//span[contains(text(), "Return Packaging:")] /.. /.. //span[@class= "outputText"]',
     specialty:
       '//span[contains(text(), "Specialty:")] /.. /.. //span[@class= "outputText"]',
-    // Temporal tooltip
-    purchaseHistory: '//div[@id= "tooltipleftMsgGREEN"]',
-  },
-  searchResults: {
+    // Alt & Subs
+    altDisclaimerMsg:
+      '//span[contains(text(), "Cardinal Health Product Alternatives or those designated as")]',
+    noAltMsg:
+      '//span[contains(text(), "No Substitutes or Alternatives were found for the product")]',
     altCin:
-      '//tr[@class ="psrGridViewRowEven"] //td[position()= 4] //div[@class= "showHand"] //a',
+      '//td[@class= "dataTableColCINPrdDtlAltSub cahTableCellBorder"] //a //span[@class= "outputText"]',
     altNdc:
-      '//tr[@class ="psrGridViewRowEven"] //td[position()= 4] //div[position() =2]',
-    // Strenghth
+      '//td[@class= "dataTableColCINPrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText" and not(ancestor::a)]',
+    altTradeName:
+      '//td[@class = "dataTableColTradeNamePrdDtlAltSub cahTableCellBorder"] //a //span[@class= "outputText"]',
+    altMfr:
+      '//td[@class= "dataTableColTradeNamePrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText" and not(ancestor::a)]',
     altSize:
-      '//tr[@class ="psrGridViewRowEven"] //td[position()= 8] //div[@class= "dataTableColNoWrapStrenghth"]',
-    altInvoiceCost:
-      '//tr[@class ="psrGridViewRowEven"] //td[position()= 11] //span[not(@class)]',
+      '//td[@class="dataTableColPkgSizePrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText"]',
+    altType:
+      '//td[@class="dataTableColTypePrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText"]',
+    altNetCost:
+      '//td[@class="dataTableColPricePrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText" and position()= 2]',
+    altNetUoiCost:
+      '//td[@class="dataTableColUOIPrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText"]',
+    altContract:
+      '//td[@class="dataTableColContractPrdDtlAltSub cahTableCellBorder"] //span[@class= "outputText"]',
+    // Purchase History
+    histInvoiceDate:
+      '//td[@class= "dataTableColDtlInvoice cahTableCellBorder"] //span[@class= "outputText"]',
+    histShipQty:
+      '//td[@class= "dataTableColDtlShipQty cahTableCellBorder"] //span[@class= "outputText"]',
+    histUnitCost:
+      '//td[@class= "dataTableColDtlUnitCost cahTableCellBorder"] //span[@class= "outputText"]',
+    histContract:
+      '//td[@class= "dataTableColDtlContract cahTableCellBorder"] //span[@class= "outputText"]',
+    histInvoiceNumber:
+      '//td[@class= "dataTableColDtlInvoiceNum cahTableCellBorder"] //span[@class= "outputText"]',
+    histOrderMethod:
+      '//td[@class= "dataTableColDtlOrderDate cahTableCellBorder"] //span[@class= "outputText" and not(ancestor::tr/@class= "displayBlockPrdPuch")]',
   },
-  altUoiCost:
-    '//tr[@class ="psrGridViewRowEven"] //td[position()= 12] //span[not(@class)]',
-  altContract: '//tr[@class ="psrGridViewRowEven"] //td[position()= 14] //font',
 };

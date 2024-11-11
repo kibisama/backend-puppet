@@ -299,7 +299,8 @@ const fn = (name, color, xPaths) => {
           _xPaths.form,
           _xPaths.stockStatus,
           _xPaths.qtyAvailable,
-          _xPaths.invoiceCost,
+          _xPaths.estNetCost,
+          _xPaths.netUoiCost,
           _xPaths.retailPriceChanged,
           _xPaths.fdbMfrName,
           _xPaths.packageQty,
@@ -317,16 +318,6 @@ const fn = (name, color, xPaths) => {
               name + ":"
             )} Product details found. Collecting data ...`
           );
-          let purchaseHistory = "";
-          const lastPurchasedImg = await page.$(
-            'img[class="last_purchased_img"]'
-          );
-          if (lastPurchasedImg) {
-            await lastPurchasedImg.hover();
-            purchaseHistory = (
-              await page.getInnerTexts(_xPaths.purchaseHistory)
-            )[0];
-          }
           const title = (await page.getInnerTexts(_xPaths.title))[0];
           const fdbLabelName = (await page.getInnerTexts(_xPaths.title))[0];
           const genericName = (
@@ -344,9 +335,8 @@ const fn = (name, color, xPaths) => {
           const qtyAvailable = (
             await page.getInnerTexts(_xPaths.qtyAvailable)
           )[0];
-          const invoiceCost = (
-            await page.getInnerTexts(_xPaths.invoiceCost)
-          )[0];
+          const estNetCost = (await page.getInnerTexts(_xPaths.estNetCost))[0];
+          const netUoiCost = (await page.getInnerTexts(_xPaths.netUoiCost))[0];
           const retailPriceChanged = (
             await page.getInnerTexts(_xPaths.retailPriceChanged)
           )[0];
@@ -367,6 +357,126 @@ const fn = (name, color, xPaths) => {
             await page.getInnerTexts(_xPaths.returnPackaging)
           )[0];
           const specialty = (await page.getInnerTexts(_xPaths.specialty))[0];
+
+          const alternativesTab = await page.waitForElement(
+            _xPaths.alternativesTab
+          );
+          let altCin,
+            altNdc,
+            altTradeName,
+            altMfr,
+            altSize,
+            altType,
+            altNetCost,
+            altNetUoiCost,
+            altContract = [];
+          if (alternativesTab) {
+            await alternativesTab.click();
+            const inProgresImg = await page.waitForElementFade(
+              _xPaths.inProgressImg,
+              3000
+            );
+            if (inProgresImg) {
+              return new CardinalPuppetError(
+                "Failed to collect Product Details"
+              );
+            }
+            const altDisclaimerMsg = await page.waitForElement(
+              _xPaths.altDisclaimerMsg
+            );
+            if (altDisclaimerMsg) {
+              const noAltMsg = await page.waitForElement(_xPaths.noAltMsg, 500);
+              if (!noAltMsg) {
+                const els = await page.waitForElements([
+                  _xPaths.altCin,
+                  _xPaths.altNdc,
+                  _xPaths.altTradeName,
+                  _xPaths.altMfr,
+                  _xPaths.altSize,
+                  _xPaths.altType,
+                  _xPaths.altNetCost,
+                  _xPaths.altNetUoiCost,
+                  _xPaths.altContract,
+                ]);
+                if (els) {
+                  altCin = await page.getInnerTexts(_xPaths.altCin);
+                  altNdc = await page.getInnerTexts(_xPaths.altNdc);
+                  altTradeName = await page.getInnerTexts(_xPaths.altTradeName);
+                  altMfr = await page.getInnerTexts(_xPaths.altMfr);
+                  altSize = altCin = await page.getInnerTexts(_xPaths.altSize);
+                  altType = await page.getInnerTexts(_xPaths.altType);
+                  altNetCost = await page.getInnerTexts(_xPaths.altNetCost);
+                  altNetUoiCost = await page.getInnerTexts(
+                    _xPaths.altNetUoiCost
+                  );
+                  altContract = await page.getInnerTexts(_xPaths.altContract);
+                }
+              }
+            }
+          }
+          let histInvoiceDate,
+            histShipQty,
+            histUnitCost,
+            histContract,
+            histInvoiceNumber,
+            histOrderMethod = [];
+          const lastPurchasedImg = await page.$(
+            'img[class="last_purchased_img"]'
+          );
+          if (lastPurchasedImg) {
+            const purchaseHistoryTab = await page.waitForElement(
+              _xPaths.purchaseHistoryTab
+            );
+            if (purchaseHistoryTab) {
+              await purchaseHistoryTab.click();
+              const inProgresImg = await page.waitForElementFade(
+                _xPaths.inProgressImg,
+                3000
+              );
+              if (inProgresImg) {
+                return new CardinalPuppetError(
+                  "Failed to collect Product Details"
+                );
+              }
+              const viewSelector = await page.waitForElement(
+                _xPaths.viewSelector
+              );
+              if (viewSelector) {
+                await viewSelector.select("details");
+                const inProgresImg = await page.waitForElementFade(
+                  _xPaths.inProgressImg,
+                  3000
+                );
+                if (inProgresImg) {
+                  return new CardinalPuppetError(
+                    "Failed to collect Product Details"
+                  );
+                }
+                const els = await page.waitForElements([
+                  _xPaths.histInvoiceDate,
+                  _xPaths.histShipQty,
+                  _xPaths.histUnitCost,
+                  _xPaths.histContract,
+                  _xPaths.histInvoiceNumber,
+                  _xPaths.histOrderMethod,
+                ]);
+                if (els) {
+                  histInvoiceDate = await page.getInnerTexts(
+                    _xPaths.histInvoiceDate
+                  );
+                  histShipQty = await page.getInnerTexts(_xPaths.histShipQty);
+                  histUnitCost = await page.getInnerTexts(_xPaths.histUnitCost);
+                  histContract = await page.getInnerTexts(_xPaths.histContract);
+                  histInvoiceNumber = await page.getInnerTexts(
+                    _xPaths.histInvoiceNumber
+                  );
+                  histOrderMethod = await page.getInnerTexts(
+                    _xPaths.histOrderMethod
+                  );
+                }
+              }
+            }
+          }
           return {
             title,
             fdbLabelName,
@@ -379,7 +489,8 @@ const fn = (name, color, xPaths) => {
             form,
             stockStatus,
             qtyAvailable,
-            invoiceCost,
+            estNetCost,
+            netUoiCost,
             retailPriceChanged,
             fdbMfrName,
             packageQty,
@@ -390,6 +501,21 @@ const fn = (name, color, xPaths) => {
             abRating,
             returnPackaging,
             specialty,
+            altCin,
+            altNdc,
+            altTradeName,
+            altMfr,
+            altSize,
+            altMfr,
+            altNetCost,
+            altNetUoiCost,
+            altContract,
+            histInvoiceDate,
+            histShipQty,
+            histUnitCost,
+            histContract,
+            histInvoiceNumber,
+            histOrderMethod,
           };
         }
       } catch (e) {
@@ -397,47 +523,6 @@ const fn = (name, color, xPaths) => {
         return e;
       }
       return new CardinalPuppetError("Failed to collect Product Details");
-    },
-    async collectSearchResults(page) {
-      const _xPaths = xPaths.searchResults;
-      try {
-        const els = await page.waitForElements([
-          _xPaths.altCin,
-          _xPaths.altNdc,
-          _xPaths.altSize,
-          _xPaths.altInvoiceCost,
-          _xPaths.altUoiCost,
-          _xPaths.altContract,
-        ]);
-        if (els) {
-          console.log(
-            `${chalk[color](
-              name + ":"
-            )} Search Results found. Collecting data ...`
-          );
-          const altCin = await page.getInnerTexts(_xPaths.altCin);
-          const altNdc = await page.getInnerTexts(_xPaths.altNdc);
-          const altSize = await page.getInnerTexts(_xPaths.altSize);
-          const altInvoiceCost = await page.getInnerTexts(
-            _xPaths.altInvoiceCost
-          );
-          const altUoiCost = await page.getInnerTexts(_xPaths.altUoiCost);
-          const altContract = await page.getInnerTexts(_xPaths.altContract);
-
-          return {
-            altCin,
-            altNdc,
-            altSize,
-            altInvoiceCost,
-            altUoiCost,
-            altContract,
-          };
-        }
-      } catch (e) {
-        console.log(`${chalk[color](name + ":")} ${e.message}`);
-        return e;
-      }
-      return new CardinalPuppetError("Failed to collect Search Results");
     },
   };
 };
