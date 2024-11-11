@@ -38,16 +38,16 @@ const updateItem = async (req, res, next) => {
           break;
         }
       }
-      if (productDetails instanceof Error) {
-        return next(productDetails);
-      }
     } else {
       next(new Error("Failed to find Product Details page."));
+    }
+    if (!productDetails || productDetails instanceof Error) {
+      return next(productDetails);
     }
 
     req.app.set("cardinalPuppetOccupied", false);
     return res.send({
-      results: { searchResults, productDetails },
+      results: { productDetails },
     });
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);

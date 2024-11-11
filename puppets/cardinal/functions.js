@@ -506,7 +506,7 @@ const fn = (name, color, xPaths) => {
             altTradeName,
             altMfr,
             altSize,
-            altMfr,
+            altType,
             altNetCost,
             altNetUoiCost,
             altContract,
