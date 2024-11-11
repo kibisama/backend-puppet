@@ -403,7 +403,7 @@ const fn = (name, color, xPaths) => {
                   altNdc = await page.getInnerTexts(_xPaths.altNdc);
                   altTradeName = await page.getInnerTexts(_xPaths.altTradeName);
                   altMfr = await page.getInnerTexts(_xPaths.altMfr);
-                  altSize = altCin = await page.getInnerTexts(_xPaths.altSize);
+                  altSize = await page.getInnerTexts(_xPaths.altSize);
                   altType = await page.getInnerTexts(_xPaths.altType);
                   altNetCost = await page.getInnerTexts(_xPaths.altNetCost);
                   altNetUoiCost = await page.getInnerTexts(
