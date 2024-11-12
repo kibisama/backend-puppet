@@ -12,7 +12,7 @@ module.exports = {
   },
   orderPage: {
     searchInput: '//input[@id= "txtSearchValue"]',
-    searchButton: '//button[@id= "SearchButoon"]',
+    searchButton: '//button[@id= "SearchButton"]',
     // Rendered when no results found
     inlineOopsImg: '//img[@id= "OopsImg" and @style="display: inline;"]',
     // Search results
