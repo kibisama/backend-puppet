@@ -11,9 +11,7 @@ const cardinalPuppet = async () => {
     timeout: 300000,
     waitUntil: "networkidle0",
   };
-  const id = process.env.CARDINAL_USERNAME;
-  const password = process.env.CARDINAL_PASSWORD;
-  const fn = functions(name, color, xPaths);
+  const fn = functions(name, color, waitForOptions, xPaths);
   try {
     const { browser, context, page } = await initPuppet(
       name,
@@ -25,7 +23,7 @@ const cardinalPuppet = async () => {
       'input[id="okta-signin-username"]'
     );
     if (usernameInput) {
-      const connect = await fn.signIn(page, id, password);
+      const connect = await fn.signIn(page);
       if (connect instanceof Error) {
         return connect;
       }

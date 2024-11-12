@@ -8,13 +8,15 @@ const isSameOrBefore = require("dayjs/plugin/isSameOrBefore");
 dayjs.extend(isSameOrBefore);
 const CardinalPuppetError = require("./CardinalPuppetError");
 
-const fn = (name, color, xPaths) => {
+const fn = (name, color, waitForOptions, xPaths) => {
   return {
-    async signIn(page, id, password) {
+    async signIn(page) {
       console.log(
         `${chalk[color](name + ":")} Signing in to Order Express ...`
       );
       try {
+        const id = process.env.CARDINAL_USERNAME;
+        const password = process.env.CARDINAL_PASSWORD;
         await page.type('input[id="okta-signin-username"]', id);
         await page.type('input[id="okta-signin-password"]', password);
         await Promise.all([
@@ -186,7 +188,6 @@ const fn = (name, color, xPaths) => {
         console.log(`${chalk[color](name + ":")} ${e.message}`);
         return e;
       }
-      return [];
     },
     async collectInvoiceDetail(page, back) {
       const _xPaths = xPaths.invoiceDetail;

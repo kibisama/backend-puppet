@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+const dayjs = require("dayjs");
 
 const reload = async (req, res, next) => {
   if (req.app.get("cardinalPuppetOccupied")) {
@@ -25,14 +26,14 @@ const reload = async (req, res, next) => {
         if (connect instanceof Error) {
           next(connect);
         }
-      } // else if () {} find an element if Cardinal is under maintenance
+      } // else if () {} find an element if Cardinal is under maintenance and send special error status
       next();
     } catch (e) {
       console.log(`${chalk[color](name + ":")} ${e.message}`);
       next(e);
     }
   } else {
-    next(new Error("Puppet not initiated"));
+    // Reboot CardinalPuppet
   }
 };
 module.exports = reload;

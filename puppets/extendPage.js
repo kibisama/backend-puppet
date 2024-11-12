@@ -102,13 +102,13 @@ const extendPage = (page, name, color) => {
       while (count++ < maxCount) {
         const targetEl = await page.$(`::-p-xpath(${xPath})`);
         if (targetEl) {
-          await new Promise((r) => setTimeout(r, interval));
-        } else {
           console.log(
             `${chalk[color](
               name + ":"
-            )} The target element ${xPath} disappeared`
+            )} Waiting for ${xPath} to be disappeared ...`
           );
+          await new Promise((r) => setTimeout(r, interval));
+        } else {
           return;
         }
       }

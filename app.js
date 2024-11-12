@@ -16,7 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const cardinalRouter = require("./routes/cardinal");
+const psRouter = require("./routes/pharmsaver");
 app.use("/cardinal", cardinalRouter);
+app.use("/pharmsaver", psRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
@@ -25,21 +27,25 @@ app.use((req, res, next) => {
 });
 
 const CardinalPuppetError = require("./puppets/cardinal/CardinalPuppetError");
+const PSPuppetError = require("./puppets/pharmsaver/PSPuppetError");
 app.use((err, req, res, next) => {
   if (err instanceof CardinalPuppetError) {
-    // reboot cardinalpuppet
+    app.set("cardinalPuppetOccupied", false);
+  } else if (err instanceof PSPuppetError) {
+    app.set("psPuppetOccupied", false);
   }
-  app.set("cardinalPuppetOccupied", false);
-  res.locals.message = err.message;
-  res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
+  console.log(err.message);
   res.sendStatus(err.status || 500);
 });
 
 const cardinalPuppet = require("./puppets/cardinal/cardinalPuppet");
-
+const psPuppet = require("./puppets/pharmsaver/psPuppet");
 const createServer = async () => {
-  app.set("cardinalPuppet", await cardinalPuppet());
+  const puppets = await Promise.all([cardinalPuppet(), psPuppet()]);
+  app.set("cardinalPuppet", puppets[0]);
   app.set("cardinalPuppetOccupied", false);
+  app.set("psPuppet", puppets[1]);
+  app.set("psPuppetOccupied", false);
   app.listen(app.get("port"), () => {
     console.log(app.get("port"), "번 포트에서 대기 중");
   });
