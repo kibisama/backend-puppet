@@ -32,7 +32,7 @@ const reload = async (req, res, next) => {
           const navigationPromise = page.waitForNavigation(waitForOptions);
           await page.goto(OrderPageUrl);
           await navigationPromise;
-          await page.waitForPageRendering();
+          // await page.waitForPageRendering(5000);
           await page.waitForElementFade(xPaths.modal.blockUI);
         };
         await goToOrderPage();

@@ -28,6 +28,6 @@ module.exports = {
     lotExpDate: '//td[@key= "LotExpiresDate"]',
     bG: '//td[@key= "BrandNameCodeText"]',
     wholesaler: '//td[@key= "WholesalerNameText"]',
-    manufacturer: '//td[@key= "ManufacturerNameTxt"]',
+    manufacturer: '//td[@key= "ManufacturerNameText"]',
   },
 };

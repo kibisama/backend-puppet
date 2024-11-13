@@ -10,7 +10,7 @@ const psPuppet = async () => {
   const url = process.env.PHARMSAVER_ADDRESS;
   const waitForOptions = {
     timeout: 300000,
-    waitUntil: "networkidle0",
+    waitUntil: "networkidle2",
   };
   const fn = functions(name, color, waitForOptions, xPaths);
   try {

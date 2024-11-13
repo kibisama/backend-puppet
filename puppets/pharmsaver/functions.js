@@ -23,7 +23,7 @@ const fn = (name, color, waitForOptions, xPaths) => {
           page.waitForNavigation(waitForOptions),
           inputEls[2].click(),
         ]);
-        await page.waitForPageRendering(5000);
+        // await page.waitForPageRendering(5000);
         await page.waitForElementFade(xPaths.modal.blockUI);
         const myAccountButton = await page.waitForElement(
           xPaths.header.myAccountButton
@@ -50,15 +50,19 @@ const fn = (name, color, waitForOptions, xPaths) => {
           _xPaths.searchButton,
         ]);
         await inputEls[0].type(query);
-        await Promise.all([
-          page.waitForNavigation(waitForOptions),
-          inputEls[1].click(),
-        ]);
-        await page.waitForPageRendering(5000);
+        // await Promise.all([
+        //   page.waitForNavigation({
+        //     timeout: 300000,
+        //     waitUntil: "load",
+        //   }),
+        //   inputEls[1].click(),
+        // ]);
+        await inputEls[1].click();
+        // await page.waitForPageRendering(5000);
         await page.waitForElementFade(xPaths.modal.blockUI);
-        const result = await Promise.race([
-          waitForElement(_xPaths.description),
-          waitForElement(_xPaths.inlineOopsImg),
+        const result = await Promise.any([
+          page.waitForElement(_xPaths.description),
+          page.waitForElement(_xPaths.inlineOopsImg),
         ]);
         if (result) {
           return;
