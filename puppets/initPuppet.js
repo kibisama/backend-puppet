@@ -4,14 +4,8 @@ const extendPage = require("./extendPage");
 
 /**
  * Initialize a puppet.
- * @param {string} name
- * @param {string} color
- * @param {string} url
- * @param {PuppeteerLaunchOptions} browserOptions
- * @param {WaitForOptions} waitForOptions
- * @returns {Promise<{Promise<Browser>,Promise<Page>}>}
  */
-const initPuppet = async (
+const initPuppet = async ({
   name = "Puppeteer",
   color = "white",
   url = "",
@@ -22,8 +16,8 @@ const initPuppet = async (
   browserOptions = {
     headless: false,
     defaultViewport: null,
-  }
-) => {
+  },
+}) => {
   console.log(`${chalk[color](name + ":")} Initializing Puppeteer ...`);
   try {
     const browser = await puppeteer.launch(browserOptions);

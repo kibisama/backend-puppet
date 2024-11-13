@@ -1,10 +1,12 @@
 const chalk = require("chalk");
+const xPaths = require("./xPaths");
+const PSPuppetError = require("./PSPuppetError");
 
-const fn = (name, color, waitForOptions, xPaths) => {
+const fn = (name, color, waitForOptions) => {
   return {
     /**
      * @param {Page} page
-     * @returns {Promise<undefined> | Promise<Error>}
+     * @returns {Promise<undefined> | Promise<PSPuppetError>}
      */
     async signIn(page) {
       console.log(`${chalk[color](name + ":")} Signing in to PharmSaver ...`);
@@ -23,26 +25,30 @@ const fn = (name, color, waitForOptions, xPaths) => {
           page.waitForNavigation(waitForOptions),
           inputEls[2].click(),
         ]);
-        // await page.waitForPageRendering(5000);
         await page.waitForElementFade(xPaths.modal.blockUI);
         const myAccountButton = await page.waitForElement(
           xPaths.header.myAccountButton
         );
         if (myAccountButton) {
+          console.log(
+            `${chalk[color](name + ":")} ... Signed in to PharmSaver`
+          );
           return;
         }
       } catch (e) {
-        return e;
+        return new PSPuppetError(e.message);
       }
-      return new Error("Failed to sign in to PharmSaver");
+      return new PSPuppetError("Failed to sign in to PharmSaver");
     },
     /**
      * @param {Page} page
      * @param {string} query
-     * @returns {Promise<undefined> | Promise<Error>}
+     * @returns {Promise<Boolean> | Promise<PSPuppetError>}
      */
     async search(page, query) {
-      console.log(`${chalk[color](name + ":")} Searching ${query} ...`);
+      console.log(
+        `${chalk[color](name + ":")} Inputting ${query} in the search bar ...`
+      );
       try {
         const _xPaths = xPaths.orderPage;
         const inputEls = await page.waitForElements([
@@ -50,31 +56,29 @@ const fn = (name, color, waitForOptions, xPaths) => {
           _xPaths.searchButton,
         ]);
         await inputEls[0].type(query);
-        // await Promise.all([
-        //   page.waitForNavigation({
-        //     timeout: 300000,
-        //     waitUntil: "load",
-        //   }),
-        //   inputEls[1].click(),
-        // ]);
         await inputEls[1].click();
-        // await page.waitForPageRendering(5000);
         await page.waitForElementFade(xPaths.modal.blockUI);
-        const result = await Promise.any([
+        await page.waitForPageRendering({ minStableSizeIterations: 2 });
+        const promises = [
           page.waitForElement(_xPaths.description),
           page.waitForElement(_xPaths.inlineOopsImg),
-        ]);
-        if (result) {
-          return;
+        ];
+        const [, i] = await Promise.any(
+          promises.map((p, i) => p.then((res) => [res, i]))
+        );
+        if (i === 0) {
+          return true; // Results found
+        } else if (i === 1) {
+          return false; // Not found
         }
       } catch (e) {
-        return e;
+        return new PSPuppetError(e.message);
       }
-      return new Error(`Failed to search ${query}`);
+      return new PSPuppetError(`Failed to search ${query}`);
     },
     /**
      * @param {Page} page
-     * @returns {Promise<Object> | Promise<Error>}
+     * @returns {Promise<Object> | Promise<PSPuppetError>}
      */
     async collectSearchResults(page) {
       const _xPaths = xPaths.orderPage;
@@ -130,9 +134,9 @@ const fn = (name, color, waitForOptions, xPaths) => {
           };
         }
       } catch (e) {
-        return e;
+        return new PSPuppetError(e.message);
       }
-      return new Error(`Failed to collect search results`);
+      return new PSPuppetError(`Failed to collect search results`);
     },
   };
 };

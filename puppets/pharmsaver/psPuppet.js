@@ -2,7 +2,6 @@ const chalk = require("chalk");
 const initPuppet = require("../initPuppet");
 const xPaths = require("./xPaths");
 const functions = require("./functions");
-const PSPuppetError = require("./PSPuppetError");
 
 const psPuppet = async () => {
   const name = "PHARMSAVER";
@@ -12,14 +11,14 @@ const psPuppet = async () => {
     timeout: 300000,
     waitUntil: "networkidle2",
   };
-  const fn = functions(name, color, waitForOptions, xPaths);
+  const fn = functions(name, color, waitForOptions);
   try {
-    const { browser, context, page } = await initPuppet(
+    const { browser, context, page } = await initPuppet({
       name,
       color,
       url,
-      waitForOptions
-    );
+      waitForOptions,
+    });
     const usernameInput = await page.waitForElement(
       xPaths.loginPage.usernameInput
     );
@@ -36,9 +35,7 @@ const psPuppet = async () => {
         context,
         page,
         waitForOptions,
-        xPaths,
         fn,
-        PSPuppetError,
       };
     }
   } catch (e) {

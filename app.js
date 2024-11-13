@@ -41,10 +41,11 @@ app.use((err, req, res, next) => {
 const cardinalPuppet = require("./puppets/cardinal/cardinalPuppet");
 const psPuppet = require("./puppets/pharmsaver/psPuppet");
 const createServer = async () => {
-  const puppets = await Promise.all([cardinalPuppet(), psPuppet()]);
-  app.set("cardinalPuppet", puppets[0]);
-  app.set("cardinalPuppetOccupied", false);
-  app.set("psPuppet", puppets[1]);
+  // const puppets = await Promise.all([cardinalPuppet(), psPuppet()]);
+  // app.set("cardinalPuppet", puppets[0]);
+  // app.set("cardinalPuppetOccupied", false);
+  // app.set("psPuppet", puppets[1]);
+  app.set("psPuppet", psPuppet());
   app.set("psPuppetOccupied", false);
   app.listen(app.get("port"), () => {
     console.log(app.get("port"), "번 포트에서 대기 중");
