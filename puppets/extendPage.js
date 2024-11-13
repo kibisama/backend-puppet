@@ -40,13 +40,17 @@ const extendPage = (page, name, color) => {
    * @param {Object} options
    * @returns {Promise<undefined>}
    */
-  page.waitForPageRendering = async ({
-    log = false,
-    minWaitingTime = 0,
-    timeout = 60000,
-    interval = 1000,
-    minStableSizeIterations = 3,
-  }) => {
+  page.waitForPageRendering = async (
+    options = {
+      log: false,
+      minWaitingTime: 0,
+      timeout: 60000,
+      interval: 1000,
+      minStableSizeIterations: 3,
+    }
+  ) => {
+    const { log, minWaitingTime, timeout, interval, minStableSizeIterations } =
+      options;
     try {
       const maxCount = timeout / interval;
       let count = 0;
