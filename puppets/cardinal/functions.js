@@ -23,7 +23,7 @@ const fn = (name, color, waitForOptions, xPaths) => {
           page.waitForNavigation(),
           page.click('input[id="okta-signin-submit"]'),
         ]);
-        await page.waitForPageRendering(15000);
+        await page.waitForPageRendering({ minWaitingTime: 15000 });
         const home = await page.waitForElement(xPaths.menu.home);
         if (home) {
           return page;

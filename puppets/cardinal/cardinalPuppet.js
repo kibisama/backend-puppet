@@ -13,19 +13,19 @@ const cardinalPuppet = async () => {
   };
   const fn = functions(name, color, waitForOptions, xPaths);
   try {
-    const { browser, context, page } = await initPuppet(
+    const { browser, context, page } = await initPuppet({
       name,
       color,
       url,
-      waitForOptions
-    );
+      waitForOptions,
+    });
     const usernameInput = await page.waitForSelector(
       'input[id="okta-signin-username"]'
     );
     if (usernameInput) {
       const connect = await fn.signIn(page);
       if (connect instanceof Error) {
-        return connect;
+        return;
       }
     }
     return { name, color, browser, context, page, fn, waitForOptions };

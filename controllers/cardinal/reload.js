@@ -9,10 +9,11 @@ const reload = async (req, res, next) => {
   }
   const cardinalPuppet = req.app.get("cardinalPuppet");
   if (cardinalPuppet) {
+    const { name, color, browser, context, page, fn, waitForOptions } =
+      cardinalPuppet;
     try {
       req.app.set("cardinalPuppetOccupied", true);
-      const { name, color, browser, context, page, fn, waitForOptions } =
-        cardinalPuppet;
+
       const id = process.env.CARDINAL_USERNAME;
       const password = process.env.CARDINAL_PASSWORD;
       const url = process.env.CARDINAL_ADDRESS;
@@ -29,7 +30,7 @@ const reload = async (req, res, next) => {
       } // else if () {} find an element if Cardinal is under maintenance and send special error status
       next();
     } catch (e) {
-      console.log(`${chalk[color](name + ":")} ${e.message}`);
+      // console.log(`${chalk[color](name + ":")} ${e.message}`);
       next(e);
     }
   } else {
