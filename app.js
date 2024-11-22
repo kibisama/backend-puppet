@@ -5,8 +5,6 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// process.env.TZ = 'America/Los_Angeles';
-
 const app = express();
 app.set("port", process.env.PORT || 3002);
 app.use(cors());
@@ -45,7 +43,6 @@ const createServer = async () => {
   app.set("cardinalPuppet", puppets[0]);
   app.set("cardinalPuppetOccupied", false);
   app.set("psPuppet", puppets[1]);
-  // app.set("psPuppet", psPuppet());
   app.set("psPuppetOccupied", false);
   app.listen(app.get("port"), () => {
     console.log(app.get("port"), "번 포트에서 대기 중");
