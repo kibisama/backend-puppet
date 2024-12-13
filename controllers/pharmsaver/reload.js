@@ -1,69 +1,33 @@
-const chalk = require("chalk");
-const dayjs = require("dayjs");
-const xPaths = require("../../puppets/pharmsaver/xPaths");
 const PSPuppetError = require("../../puppets/pharmsaver/PSPuppetError");
 
-const reload = async (req, res, next) => {
-  const psPuppet = req.app.get("psPuppet");
-  if (psPuppet) {
-    const { name, color, browser, context, page, fn, waitForOptions } =
-      psPuppet;
-    try {
-      if (req.app.get("psPuppetOccupied")) {
-        const error = new PSPuppetError("PSPuppet already in use");
-        error.status = 503;
-        next(error);
-      } else {
-        req.app.set("psPuppetOccupied", true);
-        console.log(
-          `${chalk[color](name + ":")} ${dayjs().format(
-            "MM/DD/YY HH:mm:ss"
-          )} Reloading PharmSaver Order Page ...`
-        );
-        const OrderPageUrl = process.env.PHARMSAVER_ADDRESS;
-        const goToOrderPage = async () => {
-          const navigationPromise = page.waitForNavigation(waitForOptions);
-          await page.goto(OrderPageUrl);
-          await navigationPromise;
-          await page.waitForElementFade(xPaths.modal.blockUI);
-        };
-        const onReloaded = () => {
-          console.log(
-            `${chalk[color](name + ":")} ${dayjs().format(
-              "MM/DD/YY HH:mm:ss"
-            )} ... PharmSaver Order Page reloaded`
-          );
-          next("route");
-        };
-        await goToOrderPage();
-        const url = page.url();
-        if (url === OrderPageUrl) {
-          onReloaded();
-        } else {
-          const usernameInput = await page.waitForElement(
-            xPaths.loginPage.usernameInput
-          );
-          if (usernameInput) {
-            const login = await fn.signIn(page);
-            if (login instanceof PSPuppetError) {
-              return next(login);
-            }
-            await goToOrderPage();
-            onReloaded();
-          } else {
-            const error = new PSPuppetError(
-              "Failed to reload PharmSaver Order Page"
-            );
-            next(error);
-          }
-        }
+module.exports = async (req, res, next) => {
+  try {
+    /* Choosing a free puppet */
+    const psPuppetsOccupied = req.app.get("psPuppetsOccupied");
+    const psPuppets = req.app.get("psPuppets");
+    let psPuppet = null;
+    for (let i = 0; i < psPuppetsOccupied.length; i++) {
+      if (!psPuppetsOccupied[i]) {
+        psPuppetsOccupied[i] = true;
+        psPuppet = psPuppets[i];
+        res.locals.puppetIndex = i;
+        break;
       }
-    } catch (e) {
-      const error = new PSPuppetError(e.message);
-      next(error);
     }
-  } else {
-    // Reboot PsPuppet
+    if (!psPuppet) {
+      const error = new PSPuppetError("All Pharmsaver puppets are busy");
+      error.status = 503;
+      return next(error);
+    }
+    const { page, fn } = psPuppet;
+    /* Reloading the page */
+    const reload = await fn.reload(page);
+    if (reload instanceof PSPuppetError) {
+      return next(reload);
+    }
+    next("route");
+  } catch (e) {
+    const error = new PSPuppetError(e.message);
+    next(error);
   }
 };
-module.exports = reload;

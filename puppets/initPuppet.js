@@ -4,15 +4,12 @@ const extendPage = require("./extendPage");
 
 /**
  * Initialize a puppet.
+ * @param {object}
+ * @returns {Promise<object|undefined>}
  */
-const initPuppet = async ({
+module.exports = async ({
   name = "Puppeteer",
   color = "white",
-  url = "",
-  waitForOptions = {
-    timeout: 300000,
-    waitUntil: "networkidle0",
-  },
   browserOptions = {
     headless: false,
     defaultViewport: null,
@@ -29,16 +26,8 @@ const initPuppet = async ({
       }
     });
     const page = await context.newPage();
-    if (url) {
-      const navigationPromise = page.waitForNavigation(waitForOptions);
-      await page.goto(url);
-      await navigationPromise;
-      await page.waitForPageRendering();
-    }
     return { browser, context, page };
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
   }
 };
-
-module.exports = initPuppet;

@@ -27,23 +27,25 @@ app.use((req, res, next) => {
 const CardinalPuppetError = require("./puppets/cardinal/CardinalPuppetError");
 const PSPuppetError = require("./puppets/pharmsaver/PSPuppetError");
 app.use((err, req, res, next) => {
+  const { puppetIndex } = res.locals;
   if (err instanceof CardinalPuppetError) {
-    app.set("cardinalPuppetOccupied", false);
+    const cardinalPuppetsOccupied = req.app.get("cardinalPuppetsOccupied");
+    if (err.status !== 503) {
+      cardinalPuppetsOccupied[puppetIndex] = false;
+    }
   } else if (err instanceof PSPuppetError) {
-    app.set("psPuppetOccupied", false);
+    const psPuppetsOccupied = req.app.get("psPuppetsOccupied");
+    if (err.status !== 503) {
+      psPuppetsOccupied[puppetIndex] = false;
+    }
   }
   console.log(err.message);
   res.sendStatus(err.status || 500);
 });
 
-const cardinalPuppet = require("./puppets/cardinal/cardinalPuppet");
-const psPuppet = require("./puppets/pharmsaver/psPuppet");
+const initPuppets = require("./puppets/initPuppets");
 const createServer = async () => {
-  const puppets = await Promise.all([cardinalPuppet(), psPuppet()]);
-  app.set("cardinalPuppet", puppets[0]);
-  app.set("cardinalPuppetOccupied", false);
-  app.set("psPuppet", puppets[1]);
-  app.set("psPuppetOccupied", false);
+  await initPuppets(app);
   app.listen(app.get("port"), () => {
     console.log(app.get("port"), "번 포트에서 대기 중");
   });

@@ -3,22 +3,29 @@ const initPuppet = require("../initPuppet");
 const xPaths = require("./xPaths");
 const functions = require("./functions");
 
-const psPuppet = async () => {
-  const name = "PHARMSAVER";
-  const color = "blue";
-  const url = process.env.PHARMSAVER_ADDRESS;
-  const waitForOptions = {
+/**
+ * Initialize a Pharmsaver puppet.
+ * @param {string} name
+ * @param {string} color
+ * @param {WaitForOptions} waitForOptions
+ * @returns {Promise<object|undefined>}
+ */
+module.exports = async (
+  name = "PHARMSAVER",
+  color = "blue",
+  waitForOptions = {
     timeout: 300000,
     waitUntil: "networkidle2",
-  };
+  }
+) => {
+  const url = process.env.PHARMSAVER_ADDRESS;
   const fn = functions(name, color, waitForOptions);
   try {
     const { browser, context, page } = await initPuppet({
       name,
       color,
-      url,
-      waitForOptions,
     });
+    await fn.goto(page, url);
     const usernameInput = await page.waitForElement(
       xPaths.loginPage.usernameInput
     );
@@ -26,21 +33,10 @@ const psPuppet = async () => {
       const login = await fn.signIn(page);
       if (login instanceof Error) {
         console.log(`${chalk[color](name + ":")} ${login.message}`);
-        return;
       }
-      return {
-        name,
-        color,
-        browser,
-        context,
-        page,
-        waitForOptions,
-        fn,
-      };
     }
+    return { name, color, browser, context, page, fn };
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
   }
 };
-
-module.exports = psPuppet;

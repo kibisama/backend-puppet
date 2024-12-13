@@ -1,22 +1,17 @@
 module.exports = {
-  header: {
-    myAccountButton: '//button[@title= "Manage Account and Logout"]',
-  },
-  modal: {
-    blockUI: '//div[@class= "blockUI blockMsg blockPage"]',
-  },
+  blockUI: '//div[@class= "blockUI blockMsg blockPage"]',
   loginPage: {
     usernameInput: '//input[@placeholder= "Username"]',
     passwordInput: '//input[@type= "password"]',
     loginButton: '//input[@value= "Login"]',
   },
   orderPage: {
-    searchInput: '//input[@id= "txtSearchValue"]',
-    searchButton: '//button[@id= "SearchButton"]',
+    // searchInput: '//input[@id= "txtSearchValue"]',
+    // searchButton: '//button[@id= "SearchButton"]',
     // Rendered when no results found
     inlineOopsImg: '//img[@id= "OopsImg" and @style="display: inline;"]',
     // Search results
-    description: '//td[@key= "DrugNameText"]',
+    description: '//td[@key= "DrugNameText"]', // rendered only when results found
     str: '//td[@key= "StrengthText"]',
     pkg: '//td[@key= "PackageSize"]',
     form: '//td[@key= "DosageFormText"]',

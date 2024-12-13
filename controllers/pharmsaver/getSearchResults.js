@@ -2,14 +2,15 @@ const chalk = require("chalk");
 const dayjs = require("dayjs");
 const PSPuppetError = require("../../puppets/pharmsaver/PSPuppetError");
 
-const updateSearch = async (req, res, next) => {
-  const { name, color, page, fn } = req.app.get("psPuppet");
+module.exports = async (req, res, next) => {
   try {
+    const { puppetIndex } = res.locals;
+    const { name, color, page, fn } = req.app.get("psPuppets")[puppetIndex];
     const { ndc11 } = req.body;
     console.log(
       `${chalk[color](name + ":")} ${dayjs().format(
         "MM/DD/YY HH:mm:ss"
-      )} Requested to update Search Results ${ndc11} ...`
+      )} Retrieving search results for "${ndc11}" ...`
     );
     const search = await fn.search(page, ndc11);
     if (search instanceof PSPuppetError) {
@@ -26,17 +27,15 @@ const updateSearch = async (req, res, next) => {
       console.log(
         `${chalk[color](name + ":")} ${dayjs().format(
           "MM/DD/YY HH:mm:ss"
-        )} Data collection completed. Responding ...`
+        )} Data collection completed. Sending response ...`
       );
-      req.app.set("psPuppetOccupied", false);
-      return res.send({
+      res.send({
         results,
       });
+      next("route");
     }
   } catch (e) {
     const error = new PSPuppetError(e.message);
     next(error);
   }
 };
-
-module.exports = updateSearch;

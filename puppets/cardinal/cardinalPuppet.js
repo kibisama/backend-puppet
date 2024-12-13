@@ -3,35 +3,40 @@ const initPuppet = require("../initPuppet");
 const xPaths = require("./xPaths");
 const functions = require("./functions");
 
-const cardinalPuppet = async () => {
-  const name = "CARDINAL";
-  const color = "red";
-  const url = process.env.CARDINAL_ADDRESS;
-  const waitForOptions = {
+/**
+ * Initialize a Cardinal puppet.
+ * @param {string} name
+ * @param {string} color
+ *  * @param {WaitForOptions} waitForOptions
+ * @returns {Promise<object|undefined>}
+ */
+module.exports = async (
+  name = "CARDINAL",
+  color = "red",
+  waitForOptions = {
     timeout: 300000,
     waitUntil: "networkidle0",
-  };
-  const fn = functions(name, color, waitForOptions, xPaths);
+  }
+) => {
+  const url = process.env.CARDINAL_ADDRESS;
+  const fn = functions(name, color, waitForOptions);
   try {
     const { browser, context, page } = await initPuppet({
       name,
       color,
-      url,
-      waitForOptions,
     });
-    const usernameInput = await page.waitForSelector(
-      'input[id="okta-signin-username"]'
+    await fn.goto(page, url);
+    const usernameInput = await page.waitForElement(
+      xPaths.loginPage.usernameInput
     );
     if (usernameInput) {
-      const connect = await fn.signIn(page);
-      if (connect instanceof Error) {
-        return;
+      const login = await fn.signIn(page);
+      if (login instanceof Error) {
+        console.log(`${chalk[color](name + ":")} ${login.message}`);
       }
     }
-    return { name, color, browser, context, page, fn, waitForOptions };
+    return { name, color, browser, context, page, fn };
   } catch (e) {
     console.log(`${chalk[color](name + ":")} ${e.message}`);
   }
 };
-
-module.exports = cardinalPuppet;
