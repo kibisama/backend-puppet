@@ -22,7 +22,7 @@ const fn = (name, color, waitForOptions) => {
     },
     /**
      * @param {Page} page
-     * @returns {Promise<undefined> | Promise<PSPuppetError>}
+     * @returns {Promise<undefined|PSPuppetError>}
      */
     async signIn(page) {
       console.log(`${chalk[color](name + ":")} Signing in to PharmSaver ...`);
@@ -110,7 +110,7 @@ const fn = (name, color, waitForOptions) => {
         // await page.waitForPageRendering({ minStableSizeIterations: 2 });
         const promises = [
           page.waitForElement(_xPaths.inlineOopsImg),
-          page.waitForElement(_xPaths.description),
+          page.waitForElement(_xPaths.results.description),
         ];
         const [res, i] = await Promise.any(
           promises.map((p, i) => p.then((res) => [res, i]))
@@ -127,62 +127,13 @@ const fn = (name, color, waitForOptions) => {
     },
     /**
      * @param {Page} page
-     * @returns {Promise<Object> | Promise<PSPuppetError>}
+     * @returns {Promise<object|PSPuppetError>}
      */
-    async collectSearchResults(page) {
+    async getSearchResults(page) {
       const _xPaths = xPaths.orderPage;
+      console.log(`${chalk[color](name + ":")} Scraping product details ...`);
       try {
-        const els = await page.waitForElements([
-          _xPaths.description,
-          _xPaths.str,
-          _xPaths.pkg,
-          _xPaths.form,
-          _xPaths.pkgPrice,
-          _xPaths.ndc,
-          _xPaths.qtyAvl,
-          _xPaths.unitPrice,
-          _xPaths.rxOtc,
-          _xPaths.lotExpDate,
-          _xPaths.bG,
-          _xPaths.wholesaler,
-          _xPaths.manufacturer,
-        ]);
-        if (els) {
-          console.log(
-            `${chalk[color](
-              name + ":"
-            )} Search results found. Collecting data ...`
-          );
-          const description = await page.getInnerTexts(_xPaths.description);
-          const str = await page.getInnerTexts(_xPaths.str);
-          const pkg = await page.getInnerTexts(_xPaths.pkg);
-          const form = await page.getInnerTexts(_xPaths.form);
-          const pkgPrice = await page.getInnerTexts(_xPaths.pkgPrice);
-          const ndc = await page.getInnerTexts(_xPaths.ndc);
-          const qtyAvl = await page.getInnerTexts(_xPaths.qtyAvl);
-          const unitPrice = await page.getInnerTexts(_xPaths.unitPrice);
-          const rxOtc = await page.getInnerTexts(_xPaths.rxOtc);
-          const lotExpDate = await page.getInnerTexts(_xPaths.lotExpDate);
-          const bG = await page.getInnerTexts(_xPaths.bG);
-          const wholesaler = await page.getInnerTexts(_xPaths.wholesaler);
-          const manufacturer = await page.getInnerTexts(_xPaths.manufacturer);
-          return {
-            description,
-            str,
-            pkg,
-            form,
-            pkgPrice,
-            ndc,
-            qtyAvl,
-            unitPrice,
-            rxOtc,
-            lotExpDate,
-            bG,
-            wholesaler,
-            manufacturer,
-          };
-        }
-        return new PSPuppetError(`Failed to collect search results`);
+        return (results = await page.getBatchData(_xPaths.results));
       } catch (e) {
         return new PSPuppetError(e.message);
       }

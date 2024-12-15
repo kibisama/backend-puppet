@@ -5,19 +5,16 @@ const functions = require("./functions");
 
 /**
  * Initialize a Pharmsaver puppet.
- * @param {string} name
- * @param {string} color
- * @param {WaitForOptions} waitForOptions
+ * @param {object} options
  * @returns {Promise<object|undefined>}
  */
-module.exports = async (
-  name = "PHARMSAVER",
-  color = "blue",
-  waitForOptions = {
+module.exports = async (options = {}) => {
+  const name = options.name ?? "PHARMSAVER";
+  const color = options.color ?? "blue";
+  const waitForOptions = options.waitForOptions ?? {
     timeout: 300000,
     waitUntil: "networkidle2",
-  }
-) => {
+  };
   const url = process.env.PHARMSAVER_ADDRESS;
   const fn = functions(name, color, waitForOptions);
   try {

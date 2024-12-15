@@ -12,7 +12,7 @@ const extendPage = (page, name, color) => {
   /**
    * A single xPath returns an array of innertexts. Returns an empty array if no result.
    * @param {string} xPath
-   * @returns {Promise<[string]> | Promise<undefined>}
+   * @returns {Promise<[string|undefined]|undefined>}
    */
   page.getInnerTexts = async (xPath) => {
     try {
@@ -27,30 +27,52 @@ const extendPage = (page, name, color) => {
         );
         return innerTexts;
       }
+      return [];
     } catch (e) {
       console.log(`${chalk[color](name + ":")} ${e.message}`);
     }
     // console.log(
     //   `${chalk[color](name + ":")} No elements with xPath "${xPath}" found`
     // );
-    return [];
+  };
+  /**
+   * O(N+M)
+   * @param {Page} page
+   * @returns {Promise<[object]|undefined>}
+   */
+  page.getBatchData = async (xPathTable) => {
+    try {
+      const keys = Object.keys(xPathTable);
+      const xPaths = keys.map((v) => xPathTable[v]);
+      await page.waitForElements(xPaths);
+      const results = [];
+      for (let i = 0; i < keys.length; i++) {
+        const innerTexts = await page.getInnerTexts(xPaths[i]);
+        if (innerTexts.length > 0) {
+          for (let j = 0; j < innerTexts.length; j++) {
+            if (!results[j]) {
+              results[j] = {};
+            }
+            results[j][keys[i]] = innerTexts[j];
+          }
+        }
+      }
+      return results;
+    } catch (e) {
+      console.log(`${chalk[color](name + ":")} ${e.message}`);
+    }
   };
   /**
    * Waits until the page is fully rendered.
    * @param {Object} options
    * @returns {Promise<undefined>}
    */
-  page.waitForPageRendering = async (
-    options = {
-      log: false,
-      minWaitingTime: 0,
-      timeout: 60000,
-      interval: 1000,
-      minStableSizeIterations: 3,
-    }
-  ) => {
-    const { log, minWaitingTime, timeout, interval, minStableSizeIterations } =
-      options;
+  page.waitForPageRendering = async (options = {}) => {
+    const log = options.log ?? false;
+    const minWaitingTime = options.minWaitingTime ?? 0;
+    const timeout = options.timeout ?? 60000;
+    const interval = options.interval ?? 1000;
+    const minStableSizeIterations = options.minStableSizeIterations ?? 3;
     try {
       const maxCount = timeout / interval;
       let count = 0;
@@ -96,7 +118,7 @@ const extendPage = (page, name, color) => {
    * A single xPath returns a single ElementHandle. Returns undefined if no result.
    * @param {string} xPath
    * @param {number} timeout
-   * @returns {Promise<ElementHandle> | Promise<undefined>}
+   * @returns {Promise<ElementHandle|undefined>}
    */
   page.waitForElement = async (xPath, timeout = 30000) => {
     const interval = 1000;
@@ -125,10 +147,10 @@ const extendPage = (page, name, color) => {
   };
   /**
    * Waits until all the target elements found.
-   * An array of xPaths returns an array of ElementHandles. Returns undefined if no result.
+   * An array of xPaths returns an array of ElementHandles. Returns undefined if any of them not found.
    * @param {[string]} xPathArray
    * @param {number} timeout
-   * @returns {Promise<[ElementHandle]> | Promise<undefined>}
+   * @returns {Promise<[ElementHandle]|undefined>}
    */
   page.waitForElements = async (xPathArray, timeout = 60000) => {
     const interval = 1000;
@@ -166,7 +188,7 @@ const extendPage = (page, name, color) => {
    * @param {string} xPath
    * @param {number} minWaitingTime
    * @param {number} timeout
-   * @returns {Promise<undefined> | Promise<ElementHandle>}
+   * @returns {Promise<undefined|ElementHandle>}
    */
   page.waitForElementFade = async (
     xPath,
@@ -184,6 +206,7 @@ const extendPage = (page, name, color) => {
       while (count++ < maxCount) {
         targetEl = await page.$(`::-p-xpath(${xPath})`);
         if (targetEl) {
+          console.log(targetEl);
           // console.log(
           //   `${chalk[color](
           //     name + ":"

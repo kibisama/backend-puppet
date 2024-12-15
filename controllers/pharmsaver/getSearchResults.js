@@ -16,19 +16,14 @@ module.exports = async (req, res, next) => {
     if (search instanceof PSPuppetError) {
       return next(search);
     } else if (!search) {
-      const error = new PSPuppetError("No search result found");
+      const error = new PSPuppetError(`No results found for "${ndc11}"`);
       error.status = 404;
       return next(error);
     } else {
-      const results = await fn.collectSearchResults(page);
+      const results = await fn.getSearchResults(page);
       if (results instanceof PSPuppetError) {
         return next(results);
       }
-      console.log(
-        `${chalk[color](name + ":")} ${dayjs().format(
-          "MM/DD/YY HH:mm:ss"
-        )} Data collection completed. Sending response ...`
-      );
       res.send({
         results,
       });
