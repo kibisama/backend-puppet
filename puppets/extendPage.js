@@ -206,7 +206,6 @@ const extendPage = (page, name, color) => {
       while (count++ < maxCount) {
         targetEl = await page.$(`::-p-xpath(${xPath})`);
         if (targetEl) {
-          console.log(targetEl);
           // console.log(
           //   `${chalk[color](
           //     name + ":"
