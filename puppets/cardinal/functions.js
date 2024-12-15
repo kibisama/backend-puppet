@@ -170,7 +170,7 @@ const fn = (name, color, waitForOptions) => {
               resultPromises.map((p, i) => p.then(() => i))
             );
             if (i === 0) {
-              const _result = await page.getInnerTexts(_xPaths.cin_);
+              const _result = await page.getInnerTexts(_xPaths.noAlts);
               if (_result[0]) {
                 result.alts = [];
               }
