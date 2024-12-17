@@ -64,16 +64,18 @@ module.exports = {
     alts: {
       name: '//div[@class="title-section"]//a',
       genericName: '//div[@class="title-section"]/div',
-      ndc: '//div[@class="product-info"]//span[text()="NDC"]/..//span[2]',
-      cin: '//div[@class="product-info"]//span[text()="CIN"]/..//span[2]',
-      upc: '//div[@class="product-info"]//span[text()="UPC"]/..//span[2]',
-      mfr: '//div[@class="product-info"]//span[text()="MFR"]/..//span[2]',
+      ndc: '//div[@class="product-info"]//span[text()="NDC"]/../span[2]',
+      cin: '//div[@class="product-info"]//span[text()="CIN"]/../span[2]',
+      upc: '//div[@class="product-info"]//span[text()="UPC"]/../span[2]',
+      mfr: '//div[@class="product-info"]//span[text()="MFR"]/../span[2]',
       orangeBookCode:
-        '//div[@class="product-info"]//span[text()="Orange Book Code"]/..//span[2]',
+        '//div[@class="product-info"]//span[text()="Orange Book Code"]/../span[2]',
       estNetCost:
-        '//div[@class="product-info"]//span[text()="Est. net cost"]/..//span[2]',
+        '//div[@class="product-info"]//span[text()="Est. net cost"]/../span[2]',
       netUoiCost:
-        '//div[@class="product-info"]//span[text()="Net UOI cost"]/..//span[2]',
+        '//div[@class="product-info"]//span[text()="Net UOI cost"]/../span[2]',
+      lastOrdered:
+        '//div[@class="product-info"]//span[@class="d-flex"]/span[text()="Last ordered"]/../span[2]',
       contract: '//div[@class="title-section"]//strong',
     },
     /* Purchase history */

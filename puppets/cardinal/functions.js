@@ -159,7 +159,10 @@ const fn = (name, color, waitForOptions) => {
             }
           }
           const currentUrl = page.url();
-          if (result.brandName === "— —") {
+          if (
+            result.stockStatus !== "INELIGIBLE" ||
+            result.brandName === "— —"
+          ) {
             const url = currentUrl.replace("more-details", "subs-and-alts");
             await this.goto(page, url);
             const resultPromises = [
