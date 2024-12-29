@@ -40,7 +40,7 @@ const fn = (name, color, waitForOptions) => {
         const naviPromise = page.waitForNavigation();
         await inputEls[2].click();
         await naviPromise;
-        await page.waitForPageRendering({ minWaitingTime: 10000 });
+        await page.waitForPageRendering({ minWaitingTime: 15000 });
         /* Handle redirection pages */
         const currentUrl = page.url();
         if (currentUrl === "https://vantus.cardinalhealth.com/home") {
